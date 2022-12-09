@@ -1,0 +1,297 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+  <!--<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>-->
+  <link rel="stylesheet" href="gate_entry.css">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+  </head>
+
+  <body>
+      
+  <script>
+ 
+    function Send_data(){
+        var config = require("./db-config");
+        var mysql = require('mysql');
+        
+
+        // Add the credentials to access your database
+        var connection = mysql.createConnection(config.db);
+
+        var date = document.getElementById("datepicker").value;
+        var time = document.getElementById("appt").value;
+        var person_id = document.getElementById("person_id").value;
+        var contact = document.getElementById("contact").value;           
+        var vehicle = document.getElementById("vehicle_no").value;
+
+        connection.connect((err)=>{
+            if(err) throw err;
+
+            console.log('Connected!');
+            
+        //Get data from delivery_person
+        //getData();
+        });
+
+        // function getData(){
+        //     let sql = 'SELECT * FROM delivery_person';
+        //     connection.query(sql,(err,result)=>{
+        //         if(err) throw err;
+        //         console.log(result);
+        //     });
+        // }
+
+            //Parameterized query
+            $sql = "INSERT INTO `delivery_person`(`arrival_date`, `arrival_time`, `person_id`, `contact`, `vehicle_no`) VALUES (' "+date+" ',' "+ time +" ',' "+ person_id +" ',' "+ contact +" ',' "+ vehicle +" ')";
+            connection.query($sql,(err,result)=>{
+                if (err) throw err;
+                console.log('INSERTED....');
+                console.log(date,time,person_id,contact,vehicle);
+            });
+
+};
+
+// $(document).ready(function () {
+//         $("#Add_gate").click(function () {
+//             $('#Gate_modal').modal('show');
+//         });
+//     });
+
+    $( function() {
+        $('.datepicker').datepicker({
+            ok: '',
+            clear: 'Clear selection',
+            close: 'Cancel'
+            })
+    } );
+
+    // $(document).ready(function () {
+    //     $("#Add_package").click(function () {
+    //         $('#Package_modal').modal('show');
+    //     });
+    // });
+
+    function ValidationEvent() {
+    // Storing Field Values In Variables
+    var contact = document.getElementById("contact").value;
+    if(contact.length != 10) {
+        document.getElementById("message").style.display = "block";
+    }
+    else{
+        document.getElementById("message").style.display = "none";
+    }
+    };
+
+    function validateLeaveDate(){
+        var leaveDate = document.getElementById('datepicker').value;
+        var dateerr = document.getElementById('dateerr');
+        var varDate = new Date(leaveDate); //dd-mm-YYYY
+        var today = new Date();
+        if(varDate < today){
+            dateerr.style.display='none'
+            dateerr.textContent = 'Select a Date';;
+        }
+        if(varDate > today){
+            dateerr.style.display='none'
+            dateerr.textContent = 'Select a Date';;
+        }
+        else{
+            dateerr.style.display='block';
+            dateerr.textContent = 'Invalid Selected Date';}
+        };
+
+    
+        function EnterTime(){
+            var Time= document.getElementById('appt').value;
+            var timeerr = document.getElementById('timeerr');
+            var today = new Date();
+            var todaytime = today.getHours() + ":" + today.getMinutes();
+
+            if(Time == todaytime){
+                timeerr.style.display='none'
+                timeerr.textContent = 'Select a Time';
+            }
+            else{
+                timeerr.style.display='block';
+                timeerr.textContent = 'Invalid Selected Time';
+            }
+        };
+
+        function EnterVehicle(){
+            var vehicle = document.getElementById('vehicle_no').value;
+            if(vehicle.length > 10) {
+                document.getElementById("message2").style.display = "block";
+            }
+            else{
+                document.getElementById("message2").style.display = "none";
+            }
+        };
+    
+
+</script>
+
+
+      <style>
+          btn btn-primary {
+    float: right;
+    background-color: #00AAAA;
+    color: white;
+    border-radius: 5px;
+    border-color: #00AAAA;
+    width: 189px;
+    height: 40px;
+    font-size: 14px;
+}
+
+btn :hover{
+    color: black;
+}
+
+.modal-header h4{
+ color: #00AAAA;
+}
+
+.form-group{
+  padding: 5px 20px;
+  text-align: center;
+}
+.form label{
+  font-size: 14px;
+  color: black;
+  text-align: center;
+}
+.form-control{
+  background-color: #f2f2f2;
+  color: black;
+}
+.error{
+  color: red;
+    font-style: italic;
+}
+      </style>
+    
+<div class="container">
+    <h2>GATE ENTRIES</h2>
+    <p>Following are the details of the delivery person with their specifications:</p>            
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Person ID</th>
+          <th>Contact</th>
+          <th>Vehicle No.</th>
+          <th>No. of Packages</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>14-11-2021</td>
+          <td>11:30AM</td>
+          <td>AMZN_2017_69</td>
+          <td>9893470662</td>
+          <td>MP-1973</td>
+          <td>06</td>
+        </tr>
+        <tr>
+          <td>14-11-2021</td>
+          <td>11:30AM</td>
+          <td>AMZN_2017_69</td>
+          <td>9893470662</td>
+          <td>MP-1973</td>
+          <td>06</td>
+        </tr>
+        <tr>
+          <td>14-11-2021</td>
+          <td>11:30AM</td>
+          <td>AMZN_2017_69</td>
+          <td>9893470662</td>
+          <td>MP-1973</td>
+          <td>06</td>
+        </tr>
+        
+      </tbody>
+    </table>
+
+
+  
+      <div style="text-align:center; margin-top:10%">
+              <button id="Add_gate" data-toggle="modal" data-target="#Gate_modal" class="btn btn-primary" style="background-color: #00AAAA;color: white;">+ ADD GATE ENTRY</button>
+          </div>
+          <div class="modal fade" id="Gate_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                          <h4 class="modal-title" id="myModalLabel">GATE PASS ENTRY</h4>
+                      </div>
+                      <div class="modal-body">The Gate Pass for delivery is valid  for 30 minutes. Make sure to fill up every field.</div>
+                      
+                      <form id="form1">
+                          <div class="form-group row">
+                          <label for="InputDate" class="col-sm-3 col-form-label">Arrival Date</label>
+                          <div class="col-sm-6">
+                              <input type="date" class="form-control form-control-sm" id="datepicker" onchange="validateLeaveDate()" required placeholder="Pick-up a Date">
+                              <div id="dateerr"></div>
+                          </div>
+                          </div>
+                          <div class="form-group row">
+                              <label for="InputTime" class="col-sm-3 col-form-label">Arrival Time</label>
+                              <div class="col-sm-6">
+                                  <input type="time" class="form-control form-control-sm" id="appt" onchange="EnterTime()" name="appt" required placeholder="Pick-up a Time">
+                                  <div id="timeerr"></div>
+                              </div>
+                          </div>
+                          <div class="form-group row">
+                              <label class="col-sm-3 col-form-label">Person ID</label>
+                              <div class="col-sm-6">
+                                  <input type="text" class="form-control form-control-sm" id="person_id" required placeholder="Enter delivery person's ID">
+                              </div>
+                          </div>   
+                          <div class="form-group row">
+                              <label class="col-sm-3 col-form-label">Contact</label>
+                              <div class="col-sm-6">
+                                  <input type="text" class="form-control form-control-sm" id="contact"  onchange="ValidationEvent()" required placeholder="Enter delivery person's contact">
+                                  <div id="message" style="display:none;"><p>Please enter valid contact</p></div> 
+                              </div>
+                          </div>   
+                          <div class="form-group row">
+                              <label class="col-sm-3 col-form-label">Vehicle No.</label>
+                              <div class="col-sm-6">
+                                  <input type="text" class="form-control form-control-sm" id="vehicle_no" onchange="EnterVehicle()" required placeholder="Enter Vehicle no.">
+                                  <div id="message2" style="display:none;"><p>Please enter valid name plate no.</p></div>
+                              </div>
+                          </div>       
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>
+                          <button type="submit"  class="btn btn-primary" id="Add_package" onclick="Send_data()" style="background-color: #00AAAA;color: white;">SAVE</button>
+                          <button type="button" class="btn btn-primary" style="background-color: #00AAAA;color: white;">GENERATE PASS</button>
+                          </div>
+                      </form> 
+                      
+                  </div>
+              </div>
+          </div>
+          </div>
+          
+        </body>
+  </html>
+  

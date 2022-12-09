@@ -1,0 +1,93 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap'); */
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+body{
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+.nav{
+    background-color: black;
+    height: 50px;
+}
+
+.nav-tabs > li a{
+    background-color: #000;
+    color: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 18px;
+    width: 100%;
+    height: 50px;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+
+.nav-tabs > li > a:hover{
+    color:#00AAAA;
+    background-color: black;
+    border-color: black;
+  }
+  
+.nav-tabs > li > a:focus{
+    color:#000;
+    background-color: #00AAAA;
+  }
+
+.tab-pane {
+    width: 100%;
+    height: 100%;
+    background-color:#F2F2F2;
+    padding:2px;
+
+}
+
+.menu_icon{
+    float: right;
+    padding-left: 850px;
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+    color: black;
+    display: none;
+    height: 100%;
+  }
+
+  .toolbar2{
+      background-color: #F2F2F2;
+      height: 62px;
+  }
+
+.tab2_buttons{
+    background-color: white;
+    color: black;
+    width: 225px;
+    height: 60px;
+    -webkit-border-top-left-radius: 2px;
+    -webkit-border-top-right-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    -moz-border-radius-topright: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+.tab2_buttons:hover{
+    background-color: #00AAAA;
+    color: white;
+}
+.tab2_buttons:focus{
+    background-color: black;
+    color: #00AAAA;
+}

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+       
+<link rel="stylesheet" href="nav.css">
+
+
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+<!-- <script src="/path_to/require.js"></script> -->
+  <link rel="stylesheet" href="gate_entry.css">
+  <!-- <link rel="stylesheet" href="package_entry.css"> -->
+
+
+
+ 
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+ <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>  
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script> 
+</head>
+
+<body>
+  <script>
+	
+	   
+		 
+
+    window.onload=function(){
+   console.log("on load");
+   getData_pack();
+   getData_rem();
+   getData_missing();
+ }
+
+ function getData_pack(){
+   console.log("on loading package handovering");
+   $query = "SELECT * FROM package_handover;";
+   var mysql = require("mysql");
+     var config = require("./db-config"); 
+   var connection = mysql.createConnection(config.db);
+           connection.query($query, function (err, rows, fields) {
+               if (err) {
+                   console.log("An error occurred performing the query.");
+                   console.log(err);
+                   return;
+               }else{
+
+                 var string = JSON.stringify(rows);
+                 var json = JSON.parse(string);
+                 console.log(json);
+                 let table = '<table style = "border: 0px" id="handTable" class="table table-bordered table-hover thead-dark">';
+                 table += "<tr><th>Package ID</th><th>Date</th><th>Time</th><th>Package Receiver</th><th>Contact</th></tr>";
+
+                 var x = json.length;
+               
+                 for (var i = 0; i < x; i++) {
+                    table = table + `<td>${json[i].package_id }</td>`;
+                    table = table + `<td>${json[i].date}</td>`;
+                    table = table + `<td>${json[i].time}</td>`;
+                    table = table + `<td>${json[i].received_by}</td>`;
+                    table = table + `<td>${json[i].contact}</td>`;
+
+                   table += `</tr>`;
+                 }
+                 table += "</table>";
+                 document.getElementById("tab_pack_hand").innerHTML = table;
+                   
+               }
+               console.log("Package Handovered Sucessfull");
+          
+
+         });
+     }
+
+
+     function getData_rem(){
+			console.log("on loading remaining package...");
+			$query = "SELECT d.package_id, CONCAT(p.fname,' ',p.lname) as name, p.room_no, p.hostel_no, p.contact,p.status FROM package p ,delivery_person d WHERE d.package_id=p.package_id ORDER BY `arrival_date`,`arrival_time`;";
+			var mysql = require("mysql");
+			var config = require("./db-config"); 
+			var connection = mysql.createConnection(config.db);
+
+              connection.query($query, function (err, rows, fields) {
+                  if (err) {
+                      console.log("An error occurred performing the query.");
+                      console.log(err);
+                      return;
+                  }else{
+
+                    var string = JSON.stringify(rows);
+                    var json = JSON.parse(string);
+                    console.log(json);
+                    let table = '<table style = "border: 0px" id="remTable" class="table table-bordered table-hover thead-dark">';
+                    table += "<tr><th>Package Number</th><th>Owner Name</th><th>Room No</th><th>Hostel No</th><th>Contact</th><th>Status</th></tr>";
+
+                    var x = json.length;
+                  
+                    for (var i = 0; i < x; i++) {
+                      table = table + `<td>${(json[i].package_id)}</td>`;
+                      table = table + `<td>${json[i].name}</td>`;
+                      table = table + `<td>${json[i].room_no}</td>`;
+                      table = table + `<td>${json[i].hostel_no}</td>`;
+					            table = table + `<td>${json[i].contact}</td>`;
+                      table = table + `<td>${json[i].status}</td>`;
+                      table += `</tr>`;
+                    }
+                    table += "</table>";
+                    document.getElementById("tab_pack_rem").innerHTML = table;
+                      
+                  }
+                  console.log("Query successfully executed");             
+
+            });
+        }
+
+
+
+  function getData_missing(){
+
+          console.log("in send data");
+   
+
+
+    // Add the credentials to access your database
+    var mysql = require("mysql");
+			var config = require("./db-config"); 
+    var connection = mysql.createConnection(config.db);
+
+    var miss_date = document.getElementById("missing_dt").value;
+var miss_package_id = document.getElementById("missing_package_id").value;
+
+console.log(connection);
+console.log("on loading missing package");
+
+console.log(miss_package_id,miss_date);
+
+    connection.connect((err)=>{
+        if(err) throw err;
+
+        console.log('Connected!');
+    });
+
+			console.log("on loading missing package...");
+			$query = "SELECT p.package_id ,p.status,ph.date,ph.time,ph.received_by,ph.contact FROM package p ,delivery_person d,package_handover ph WHERE p.package_id = '"+miss_package_id+"';";
+		
+
+              connection.query($query, function (err, rows, fields) {
+                  if (err) {
+                      console.log("An error occurred performing the query.");
+                      console.log(err);
+                      return;
+                  }else{
+
+                    var string = JSON.stringify(rows);
+                    var json = JSON.parse(string);
+                    console.log("Missin packages searchojing");
+                    
+                   console.log(json);
+                     let pack_id=json[0].package_id;
+                  
+                     let status=json[0].status;
+                     let rec_date=json[0].date;
+                     let rec_time=json[0].time;
+                     let receiver=json[0].received_by;
+                     let contact=json[0].contact;
+
+             
+                    document.getElementById("pack_id").innerHTML = pack_id;
+                    document.getElementById("arr_date").innerHTML = arrival_dt;
+                    document.getElementById("arr_time").innerHTML = arrival_time;
+                    document.getElementById("rec_status").innerHTML = status;
+                    document.getElementById("rec_date").innerHTML = rec_date;
+                    document.getElementById("rec_time").innerHTML = rec_time;
+                    document.getElementById("pack_rec").innerHTML = receiver;
+                    document.getElementById("rec_contact").innerHTML = contact;
+                      
+                  }
+                  console.log("Query successfully executed");             
+
+            });
+        }
+
+</script>
+
+	<section class="vh-100" style="background-color:rgb(196, 228, 255)">
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li ><a href="#package_delivery" type="button" onclick="window.location.href='nav.html'" role="tab" data-toggle="tab">Package Delivery</a></li>
+		<li ><a href="#received_packages" type="button" onclick="window.location.href='remaining_package.html'" role="tab" data-toggle="tab">Received Packages</a></li>
+		<ul class="menu_icon">
+			<li>
+				<img src="images/logout.png" onclick="window.location.href='index.html'"  style="margin-left: 80px;"alt="profile" width="45px" height="45px">
+				<!-- <img src="images/instruction.png" alt="instructions" width="45px" height="45px"> -->
+			</li>
+		</ul>
+		
+	</ul>
+	
+
+	<!-- Tab panes -->
+	
+
+		<div class="tab-content">
+			<div class="tab-pane active" id="received_package">
+				<div class="toolbar2">			
+					<button id="handovered_package" class="tab2_buttons" style="font-size:large; ">Handovered Packages</button>
+				<button id="remaining_package" class="tab2_buttons"  style="font-size:large;" >Remaining Packages</button>
+				<button id="missing_package" class="tab2_buttons"  data-toggle="modal" data-target="#missing_modal" style="font-size:large;" >Missing Package</button>
+				<div class='wrapper position-relative'>
+					<div id="div1" class=' div1 container-fluid position-absolute vh-100' style="background-color:  rgb(255, 255, 255);visibility: visible; ">
+						  <h2 style="text-align: left; font-size:x-large;padding-top: 20px;padding-left: 10px;">PACKAGES HANDOVERED</h2>
+						  <p style="padding-left: 10px;font-size: 12px; ">Following are the details of the packages being received with their specifications:</p>            
+					
+              <div id="tab_pack_hand" class="table-responsive" style="width: 100%;">
+              </div>
+              
+           
+            </div>
+
+					<div id="div2" class='div2 container-fluid position-absolute vh-100' style="background-color:  rgb(255, 255, 255);visibility: hidden; ">
+						<h2 style="text-align: left; font-size:x-large;padding-top: 20px;padding-left: 10px;">REMAINING PACKAGES</h2>
+						<p style="padding-left: 10px;font-size: 12px;" >Following are the details of the packages that are not  eing received by the rightful owner:</p>            
+            
+            <div id="tab_pack_rem" class="table-responsive" style="width: 100%;">
+            </div>
+          
+            <div style="text-align:center; margin-top:10%">
+              <button id="Add_gate"  data-toggle="modal" data-target="#rem_modal" class="btn btn-primary" style="background-color: #00AAAA;color: white;font-size: large;">+ ADD PACKAGE HANDOVERING</button>
+            </div>
+          
+
+
+            <div style="text-align: center;">
+										
+              <div class="modal fade" style="margin-top:150px;" id="rem_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title" id="myModalLabel">Package Entry</h4>
+
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    
+                    <form id="form1" style="margin-right: 50px;">
+                      <div class="form-group row">
+                      <label for="InputDate" class="col-sm-5 col-form-label">Receiving Date</label>
+                      <div class="col-sm-6">
+                        <input type="date" class="form-control form-control-sm" id="datepicker" onchange="validateLeaveDate()" required placeholder="Pick-up a Date">
+                        <div id="dateerr"></div>
+                      </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="InputTime" class="col-sm-5 col-form-label">Receiving Time</label>
+                        <div class="col-sm-6">
+                          <input type="time" class="form-control form-control-sm" id="appt" onchange="EnterTime()" name="appt" required placeholder="Pick-up a Time">
+                          <div id="timeerr"></div>
+                        </div>
+                      </div>
+                      
+                    
+                      <div class="form-group row">
+                        <label class="col-sm-5 col-form-label">Package ID</label>
+                        <div class="col-sm-6">
+                          <input type="text" class="form-control form-control-sm" id="package_id" required placeholder="Enter Package ID">
+                        </div>
+                      </div>  
+                      
+                      <div class="form-group row">
+                        <label class="col-sm-5 col-form-label">Package Receiver</label>
+                        <div class="col-sm-6">
+                          <input type="text" class="form-control form-control-sm" id="package_rec" required placeholder="Enter Package Receiver's name">
+                        </div>
+                      </div>  
+
+                      <div class="form-group row">
+                        <label class="col-sm-5 col-form-label">Contact</label>
+                        <div class="col-sm-6">
+                          <input type="text" class="form-control form-control-sm" id="contact"  onchange="ValidationEvent()" required placeholder="Enter delivery person's contact">
+                          <div id="message" style="display:none;"><p>Please enter valid contact</p></div> 
+                        </div>
+                      </div>   
+                          
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>
+                      <button type="button"  class="btn btn-primary" id="Add_package" data-target="#Package_modal"  data-toggle="modal" onclick="Send_data_hand()" style="background-color: #00AAAA;color: white;">SAVE</button>
+                      </div>
+                    </form> 
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+
+				  <div id="div3" class='div3 container-fluid position-absolute vh-100' style="background-color:  rgb(255, 255, 255);visibility: hidden; ">
+					<h2 style="text-align: left; font-size:x-large;padding-top: 20px;padding-left: 10px;">MISSING PACKAGE</h2>
+					<p style="padding-left: 10px;font-size: 12px;">Search for the missing package detail below:</p>            
+
+                <div id='divv1'class=' container-fluid position-absolute'  style=" padding: 50px; width: 650px; height: 400px; background-color:  rgb(245, 245, 245);" >
+                    
+                  <form id="form1" style="margin-right: 50px;">
+                    <img style="align-items: center;margin-left: 200px;" width="100px" height="100px" src="images/warning.png">
+
+                    <div class="form-group row">
+
+                    <label for="InputDate" style="padding-top: 20px; font-weight: lighter; font-size:16px" class="col-sm-5 col-form-label">Arrival Date</label>
+                    <div class="col-sm-6" style="padding-top: 20px; ">
+                      <input type="date"  id="missing_dt" style=" font-weight: lighter; font-size:16px" class="form-control form-control-sm" onchange="validateLeaveDate()" required placeholder="Pick-up a Date">
+                      <div id="dateerr"></div>
+                    </div>
+                    </div>                     
+   
+                    <div class="form-group row">
+                      <label style="font-weight: lighter; font-size:16px;padding-top: 20px;" class="col-sm-5 col-form-label">Package ID</label>
+                      <div class="col-sm-6"  style="padding-top: 20px; ">
+                        <input type="text" style=" font-weight: lighter; font-size:16px" class="form-control form-control-sm" id="missing_package_id" required placeholder="Enter Package ID">
+                      </div>
+                    </div>                     
+                        
+                    <div style="text-align:center; margin-top:10%">
+                      <button id="search_pack" type="button" class="btn btn-primary" style="background-color: #00AAAA;color: white;font-size: 16px; width: 300px;" onclick="getData_missing()">SEARCH PACKAGE RECEIVING</button>
+                    </div>
+                  </form> 
+                </div>
+                <div  id='divv2'class=' container-fluid '  style=" margin-left: 680px; width: 650px; height: 400px; background-color:  rgb(241, 250, 252);visibility: hidden;"  >
+                    
+                  <form id="form2" style="align-content: left;margin-top: 50px;">
+                                        
+                  
+                    <div class="form-group row">
+                      <label style="  font-size:12px" class="col-sm-5 col-form-label">Package ID</label>
+                      <div id="pack_id" class="col-sm-6" style="padding-top: 5px; text-align: left;font-size:12px; background-color: #f3f3f3;" >
+                                                                                                                                                                                                                  887</div>
+                    </div>
+<!-- 
+                    <div class="form-group row">
+                      <label for="InputDate" style="font-size:12px" class="col-sm-5 col-form-label">Arrival Date</label>
+                      <div id="arr_date" class="col-sm-6"  style="padding-top: 5px; text-align: left;font-size:12px;background-color: #f3f3f3;" >
+                        
+                      </div>
+                      </div> 
+                      <div class="form-group row">
+                        <label for="InputTime" class="col-sm-5 col-form-label" style="  font-size:12px">Arrival Time</label>
+                        <div id="arr_time" class="col-sm-6"  style="padding-top: 5px; text-align: left;font-size:12px;background-color: #f3f3f3;">
+                          
+                        </div>
+                      </div>                 
+                       -->
+                             
+                    <div class="form-group row">
+                      <label class="col-sm-5 col-form-label" style="  font-size:12px">Receiving Status</label>
+                      <div id="rec_status" class="col-sm-6"  style="padding-top: 5px; text-align: left;font-size:12px;background-color: #f3f3f3;">
+                                                                                                                                                                  Received</div>
+                    </div> 
+ 
+                      <div class="form-group row">
+                        <label for="InputDate" style="  font-size:12px" class="col-sm-5 col-form-label">Receiving Date</label>
+                        <div id="rec_date" class="col-sm-6"  style="padding-top: 5px; text-align: left;font-size:12px;background-color: #f3f3f3;" >
+                                                                                                                                                                     2022-04-29T18:30:00.000Z </div>
+                        </div> 
+                        <div class="form-group row">
+                          <label for="InputTime" style="  font-size:12px" class="col-sm-5 col-form-label">Receiving Time</label>
+                          <div id="rec_time" class="col-sm-6"  style="padding-top: 5px; text-align: left;font-size:12px;background-color: #f3f3f3;">
+                                                                                                                                                                               12:08:00
+                          </div>
+                        </div>                 
+                      
+                      <div class="form-group row">
+                      <label class="col-sm-5 col-form-label" style="  font-size:12px">Package Receiver</label>
+                      <div id="pack_rec" class="col-sm-6"  style="padding-top: 5px; text-align: left;font-size:12px;background-color: #f3f3f3;">
+                                                                                                                                                                                Lalita
+                      </div>
+                    </div>  
+
+                    <div class="form-group row">
+                      <label class="col-sm-5 col-form-label" style="  font-size:12px">Receiver Contact</label>
+                      <div id="rec_contact" class="col-sm-6" style="padding-top: 5px; text-align: left;font-size:12px;background-color: #f3f3f3;">
+                                                                                                                                                                                                        8105479780
+                      </div>
+                    </div> 
+             
+                        
+                    
+                  </form> 
+                </div>
+      
+									
+        </div>
+
+			</div>
+		  
+						  </div>
+						  
+							  
+							</div>
+					</div>
+				
+			</div>
+
+	</div>
+	
+		
+		
+</section>
+<script>
+
+function Send_data_hand(){
+  var mysql = require("mysql");
+  var config = require("./db-config");
+  console.log("in send data");
+   
+    
+
+    // Add the credentials to access your database
+    var connection = mysql.createConnection(config.db);
+
+    var date = document.getElementById("datepicker").value;
+    var time = document.getElementById("appt").value;
+var package_id = document.getElementById("package_id").value;
+var package_rec = document.getElementById("package_rec").value;
+
+var contact = document.getElementById("contact").value;           
+console.log(connection);
+
+// connection.connect(function (err) {
+    //           // in case of error
+    //           if (err) {
+    //               console.log(err.code);
+    //               console.log(err.fatal);
+    //           }
+    //       });
+
+    connection.connect((err)=>{
+        if(err) throw err;
+
+        console.log('Connected!');
+        
+    // // Get data from delivery_person
+    // getData();
+    });
+
+window.onload=function(){
+  console.log("on load");
+  //getData();
+}
+        //Parameterized query
+        $sql = "INSERT INTO `package_handover`(`package_id`,`date`, `time`, `received_by`, `contact`) VALUES (' "+ package_id +" ',' "+date+" ',' "+ time +" ',' "+ package_rec +" ',' "+ contact +" ')";
+        $sql2 = "UPDATE package SET status = 'Received' WHERE package_id=887;";
+        
+        connection.query($sql,(err,result)=>{
+            if (err) throw err;
+            console.log('INSERTED....');
+    console.log(date);
+        });
+		  
+        connection.query($sql2,(err,result)=>{
+            if (err) throw err;
+            console.log('INSERTED....');
+    console.log(date);
+        });
+		  
+
+
+};
+
+// function Send_data_missing(){
+//   var mysql = require("mysql");
+//   var config = require("./db-config");
+//   console.log("in send data");
+   
+    
+
+//     // Add the credentials to access your database
+//     var connection = mysql.createConnection(config.db);
+
+//     var miss_date = document.getElementById("missing_dt").value;
+// var miss_package_id = document.getElementById("missing_package_id").value;
+
+// console.log(connection);
+// console.log(miss_package_id,miss_date);
+
+//     connection.connect((err)=>{
+//         if(err) throw err;
+
+//         console.log('Connected!');
+//     });
+//     window.onload=function(){
+//   console.log("on loading missing package");
+//   getData_missing();
+//     }
+// };
+
+$("#search_pack").on('click', function (event){ 
+						
+						 $("#divv2").css("visibility", "visible");
+					   }); 
+function ValidationEvent() {
+			// Storing Field Values In Variables
+			var contact = document.getElementById("contact").value;
+			if(contact.length != 10) {
+				document.getElementById("message").style.display = "block";
+			}
+			else{
+				document.getElementById("message").style.display = "none";
+			}
+			};
+
+		function validateLeaveDate(){
+			var leaveDate = document.getElementById('datepicker').value;
+			var dateerr = document.getElementById('dateerr');
+			var varDate = new Date(leaveDate); //dd-mm-YYYY
+			var today = new Date();
+			if(varDate < today){
+				dateerr.style.display='none'
+				dateerr.textContent = '';;
+			}
+			if(varDate > today){
+				dateerr.style.display='none'
+				dateerr.textContent = '';;
+			}
+			else{
+				dateerr.style.display='block';
+				dateerr.textContent = '';}
+			};
+
+    
+        function EnterTime(){
+            var Time= document.getElementById('appt').value;
+            var timeerr = document.getElementById('timeerr');
+            var today = new Date();
+            var todaytime = today.getHours() + ":" + today.getMinutes();
+
+            if(Time == todaytime){
+                timeerr.style.display='none'
+                timeerr.textContent = 'Select a Time';
+            }
+            else{
+                timeerr.style.display='block';
+                timeerr.textContent = '';
+            }
+        };
+
+    
+</script>
+<script>
+	 	$("#handovered_package").on('click', function (event){ 
+						 $(this).css("color", "#00AAAA");
+						 $(this).css("background-color", "#000");
+						 $("#remaining_package").css("color", "black");
+						 $("#remaining_package").css("background-color", "white");
+             $("#missing_package").css("color", "black");
+						 $("#missing_package").css("background-color", "white");
+	   
+						 $("#div2").css("visibility", "hidden");
+						 $("#div1").css("visibility", "visible");
+             $("#div3").css("visibility", "hidden");
+					   }); 
+	  $("#remaining_package").on('click', function (event){ 
+			   $(this).css("color", "#00AAAA");
+			   $(this).css("background-color", "#000");
+         $("#handovered_package").css("color", "black");
+        $("#handovered_package").css("background-color", "white");
+        $("#missing_package").css("color", "black");
+        $("#missing_package").css("background-color", "white");
+    
+             $("#div2").css("visibility", "visible");
+						 $("#div1").css("visibility", "hidden");
+             $("#div3").css("visibility", "hidden");
+			   
+		   });
+
+       $("#missing_package").on('click', function (event){ 
+			   $(this).css("color", "#00AAAA");
+			   $(this).css("background-color", "#000");
+			   $("#handovered_package").css("color", "black");
+        $("#handovered_package").css("background-color", "white");
+        $("#remaining_package").css("color", "black");
+						 $("#remaining_package").css("background-color", "white");
+	   
+         $("#div2").css("visibility", "hidden");
+						 $("#div1").css("visibility", "hidden");
+             $("#div3").css("visibility", "visible");
+			   
+		   });
+</script>
+
+			   
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+    "db": {
+      "host": "localhost",
+      "user": "root",
+      "password": null,
+      "database": "delivery_management"
+    }
+  }
